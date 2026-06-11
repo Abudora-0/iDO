@@ -1,5 +1,7 @@
 # iDO — Priority-Based Todo App
 
+**Live Demo:** https://i-do-rouge.vercel.app
+
 A focused, distraction-free task manager with priority levels and real-time stats. Built to help you stay on top of what matters most.
 
 ---
