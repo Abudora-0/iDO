@@ -2,84 +2,60 @@ import { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import Navbar from './components/Navbar'
 
-// Priority config — full class strings so Tailwind JIT picks them up
+// Priority config — rendered as rubber-stamp labels on the paper
 const PRIORITY = {
-  high: {
-    label: 'High',
-    badge: 'bg-red-100 text-red-600 border-red-200',
-    bar:   'border-l-red-500',
-    dot:   'bg-red-500',
-  },
-  medium: {
-    label: 'Medium',
-    badge: 'bg-orange-100 text-orange-600 border-orange-200',
-    bar:   'border-l-orange-500',
-    dot:   'bg-orange-500',
-  },
-  low: {
-    label: 'Low',
-    badge: 'bg-green-100 text-green-600 border-green-200',
-    bar:   'border-l-green-500',
-    dot:   'bg-green-500',
-  },
+  high:   { label: 'Urgent',   color: '#d9534f' },
+  medium: { label: 'Soon',     color: '#b8860b' },
+  low:    { label: 'Whenever', color: '#6b7f3f' },
 }
 
 const LS_KEY = 'ido-todos-v2'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function StatCard({ value, label, textColor }) {
-  return (
-    <div className="bg-white rounded-xl border border-orange-100 p-4 text-center shadow-sm">
-      <div className={`text-3xl font-black ${textColor}`}>{value}</div>
-      <div className="text-xs text-slate-400 font-medium mt-1">{label}</div>
-    </div>
-  )
-}
-
 function TodoItem({ todo, onToggle, onEdit, onDelete, isEditing }) {
   const p = PRIORITY[todo.priority || 'medium']
 
   return (
     <div
-      className={`todo-enter bg-white rounded-xl border border-orange-100 border-l-4 ${p.bar} px-4 py-3.5 flex items-center gap-3 shadow-sm hover:shadow-md transition-all duration-200 group ${
-        isEditing ? 'ring-2 ring-orange-400 ring-offset-1' : ''
+      className={`todo-enter flex items-center gap-3 pl-4 pr-3 group min-h-[36px] ${
+        isEditing ? 'bg-[#1f2a44]/5' : ''
       }`}
     >
-      {/* Checkbox */}
+      {/* Checkbox — square ink box */}
       <button
         onClick={() => onToggle(todo.id)}
-        className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all duration-200 ${
+        className={`w-[18px] h-[18px] border-2 rounded-[3px] flex-shrink-0 flex items-center justify-center transition-all duration-150 ${
           todo.isCompleted
-            ? 'bg-green-500 border-green-500'
-            : 'border-slate-300 hover:border-orange-400'
+            ? 'bg-[#1f2a44] border-[#1f2a44]'
+            : 'border-[#98a3ba] hover:border-[#1f2a44] bg-transparent'
         }`}
       >
         {todo.isCompleted && (
           <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-            <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2 6.5l2.6 2.8L10 2.5" stroke="#faf5e8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
       </button>
 
       {/* Text */}
-      <span className={`flex-1 text-sm font-medium leading-snug ${
-        todo.isCompleted ? 'line-through text-slate-400' : 'text-slate-700'
+      <span className={`flex-1 text-[15px] leading-9 truncate ${
+        todo.isCompleted ? 'done-strike' : 'text-[#1f2a44]'
       }`}>
         {todo.todo}
       </span>
 
-      {/* Priority badge */}
-      <span className={`hidden sm:inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${p.badge}`}>
+      {/* Priority stamp */}
+      <span className="stamp hidden sm:inline-block" style={{ color: p.color }}>
         {p.label}
       </span>
 
-      {/* Action buttons — visible on hover */}
-      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+      {/* Actions — visible on hover */}
+      <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
         <button
           onClick={() => onEdit(todo.id)}
           title="Edit"
-          className="p-1.5 rounded-lg text-slate-400 hover:text-orange-600 hover:bg-orange-50 transition-all"
+          className="p-1.5 text-[#98a3ba] hover:text-[#1f2a44] transition-colors"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
@@ -89,7 +65,7 @@ function TodoItem({ todo, onToggle, onEdit, onDelete, isEditing }) {
         <button
           onClick={() => onDelete(todo.id)}
           title="Delete"
-          className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+          className="p-1.5 text-[#98a3ba] hover:text-[#d9534f] transition-colors"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="3 6 5 6 21 6" />
@@ -102,36 +78,17 @@ function TodoItem({ todo, onToggle, onEdit, onDelete, isEditing }) {
   )
 }
 
-const EmptyIcons = {
-  all: (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fdba74" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="3"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="15" x2="13" y2="15"/>
-    </svg>
-  ),
-  active: (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#86efac" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/>
-    </svg>
-  ),
-  completed: (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fdba74" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
-    </svg>
-  ),
-}
-
 function EmptyState({ filter }) {
   const map = {
-    all:       { title: 'No tasks yet!',    sub: 'Add your first task above to get started.' },
-    active:    { title: 'All caught up!',   sub: "No active tasks — you're crushing it!" },
-    completed: { title: 'Nothing done yet', sub: 'Complete some tasks to see them here.' },
+    all:       { title: 'A blank page', sub: 'Write your first task above.' },
+    active:    { title: 'All crossed off', sub: 'Nothing left on the list — enjoy it.' },
+    completed: { title: 'Nothing done yet', sub: 'Crossed-off tasks land here.' },
   }
   const m = map[filter]
   return (
-    <div className="text-center py-16">
-      <div className="flex justify-center mb-4">{EmptyIcons[filter]}</div>
-      <p className="font-bold text-slate-700 text-lg mb-1">{m.title}</p>
-      <p className="text-slate-400 text-sm">{m.sub}</p>
+    <div className="text-center py-14 px-4">
+      <p className="font-display italic text-2xl text-[#5d6b8a] mb-1">{m.title}</p>
+      <p className="text-[#98a3ba] text-sm">{m.sub}</p>
     </div>
   )
 }
@@ -207,105 +164,83 @@ export default function App() {
   const active    = total - completed
 
   return (
-    <div className="min-h-screen bg-orange-50">
+    <div className="min-h-screen">
       <Navbar />
 
-      <main className="max-w-2xl mx-auto px-4 py-8">
-
-        {/* ── Stats ── */}
-        {total > 0 && (
-          <div className="grid grid-cols-3 gap-3 mb-6">
-            <StatCard value={total}     label="Total"     textColor="text-orange-500" />
-            <StatCard value={active}    label="Remaining" textColor="text-amber-500"  />
-            <StatCard value={completed} label="Done"      textColor="text-green-500"  />
-          </div>
-        )}
+      <main className="max-w-2xl mx-auto px-5 py-8">
 
         {/* ── Add / Edit form ── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-orange-100 p-5 mb-6">
-
-          <h2 className="flex items-center gap-2 font-bold text-slate-600 text-xs uppercase tracking-wider mb-3">
-            {editId ? (
-              <>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                </svg>
-                Edit Task
-              </>
-            ) : (
-              <>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-                Add New Task
-              </>
-            )}
-          </h2>
-
-          <div className="flex gap-2 mb-3">
+        <div className="mb-8">
+          <p className="font-display italic text-[#5d6b8a] text-sm mb-2">
+            {editId ? 'Rewrite this task —' : 'Add to the list —'}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               value={todoText}
               onChange={e => setTodoText(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleAdd()}
-              placeholder="What needs to be done?"
-              className="flex-1 px-4 py-3 rounded-xl border border-orange-200 bg-orange-50/40 text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all"
+              placeholder="what needs doing?"
+              className="ink-input flex-1"
             />
-            <button
-              onClick={handleAdd}
-              disabled={todoText.trim().length < 3}
-              className="px-5 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-400 text-white font-bold text-sm hover:from-orange-400 hover:to-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-orange-200 hover:-translate-y-0.5 duration-150"
-            >
-              {editId ? 'Update' : 'Add'}
-            </button>
-            {editId && (
+            <div className="flex gap-2">
               <button
-                onClick={cancelEdit}
-                className="px-4 py-3 rounded-xl border border-slate-200 text-slate-500 text-sm hover:bg-slate-50 transition-all"
+                onClick={handleAdd}
+                disabled={todoText.trim().length < 3}
+                className="btn-ink"
               >
-                Cancel
+                {editId ? 'Rewrite' : 'Jot it down'}
               </button>
-            )}
+              {editId && (
+                <button
+                  onClick={cancelEdit}
+                  className="px-4 py-2 text-sm font-semibold text-[#5d6b8a] hover:text-[#1f2a44] transition-colors"
+                >
+                  Never mind
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Priority picker */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-slate-400 font-semibold">Priority:</span>
+          <div className="flex items-center gap-3 flex-wrap mt-4">
+            <span className="text-[11px] uppercase tracking-widest text-[#98a3ba] font-bold">Mark as</span>
             {Object.entries(PRIORITY).map(([key, val]) => (
               <button
                 key={key}
                 onClick={() => setPriority(key)}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
-                  priority === key
-                    ? val.badge + ' shadow-sm scale-105'
-                    : 'bg-slate-50 text-slate-400 border-slate-200 hover:border-slate-300'
-                }`}
+                className="stamp transition-all"
+                style={{
+                  color: val.color,
+                  opacity: priority === key ? 1 : 0.35,
+                  transform: priority === key ? 'rotate(-2deg) scale(1.08)' : 'rotate(-2deg)',
+                  background: priority === key ? `${val.color}14` : 'transparent',
+                }}
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${priority === key ? val.dot : 'bg-slate-300'}`} />
                 {val.label}
               </button>
             ))}
           </div>
         </div>
 
-        {/* ── Filter bar ── */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex bg-white rounded-xl border border-orange-100 p-1 gap-1 shadow-sm">
+        {/* ── Filter tabs + progress ── */}
+        <div className="flex items-end justify-between mb-3 flex-wrap gap-2">
+          <div className="flex gap-5">
             {([
-              ['all',       `All (${total})`],
-              ['active',    `Active (${active})`],
-              ['completed', `Done (${completed})`],
-            ]).map(([val, label]) => (
+              ['all',       'Everything', total],
+              ['active',    'To do',      active],
+              ['completed', 'Done',       completed],
+            ]).map(([val, label, count]) => (
               <button
                 key={val}
                 onClick={() => setFilter(val)}
-                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+                className={`text-sm pb-1 border-b-2 transition-all ${
                   filter === val
-                    ? 'bg-gradient-to-r from-orange-500 to-amber-400 text-white shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800'
+                    ? 'font-bold text-[#1f2a44] border-[#d9534f]'
+                    : 'text-[#98a3ba] border-transparent hover:text-[#5d6b8a]'
                 }`}
               >
-                {label}
+                {label} <sup className="text-[10px]">{count}</sup>
               </button>
             ))}
           </div>
@@ -313,15 +248,15 @@ export default function App() {
           {completed > 0 && (
             <button
               onClick={clearCompleted}
-              className="text-xs text-red-400 hover:text-red-600 font-semibold transition-colors"
+              className="text-xs italic font-display text-[#d9534f] hover:underline underline-offset-2 transition-colors"
             >
-              Clear done
+              tear out the done ones
             </button>
           )}
         </div>
 
-        {/* ── Todo list ── */}
-        <div className="space-y-3">
+        {/* ── The list (a sheet of ruled paper) ── */}
+        <div className="paper-sheet rounded-sm py-2">
           {filtered.length === 0
             ? <EmptyState filter={filter} />
             : filtered.map(t => (
@@ -337,26 +272,12 @@ export default function App() {
           }
         </div>
 
-        {/* Footer hint */}
+        {/* Footer line */}
         {total > 0 && (
-          <p className="text-center text-slate-400 text-xs mt-8">
-            <span className="inline-flex items-center gap-1.5">
-            {active === 0 ? (
-              <>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
-                </svg>
-                All tasks complete!
-              </>
-            ) : (
-              <>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/>
-                </svg>
-                {active} task{active !== 1 ? 's' : ''} remaining
-              </>
-            )}
-          </span>
+          <p className="text-center font-display italic text-[#5d6b8a] text-sm mt-6">
+            {active === 0
+              ? 'Everything crossed off. Well done.'
+              : `${completed} of ${total} crossed off — ${active} to go.`}
           </p>
         )}
 

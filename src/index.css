@@ -2,15 +2,144 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --paper: #f6efdf;
+  --paper-line: #dcd2ba;
+  --rule-blue: #b9c4d8;
+  --ink: #1f2a44;
+  --ink-soft: #5d6b8a;
+  --ink-faint: #98a3ba;
+  --margin-red: #d9534f;
+  --stamp-olive: #6b7f3f;
+  --stamp-amber: #b8860b;
+}
+
 body {
-  background-color: #fff7ed;
+  font-family: 'Karla', sans-serif;
+  color: var(--ink);
+  background-color: var(--paper);
+  /* subtle paper grain */
+  background-image:
+    radial-gradient(rgba(31, 42, 68, 0.025) 1px, transparent 1px);
+  background-size: 5px 5px;
+}
+
+.font-display {
+  font-family: 'Fraunces', serif;
+}
+
+::selection {
+  background: rgba(217, 83, 79, 0.2);
+}
+
+/* the ruled-paper sheet */
+.paper-sheet {
+  position: relative;
+  background-color: #faf5e8;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 35px,
+    rgba(185, 196, 216, 0.45) 35px,
+    rgba(185, 196, 216, 0.45) 36px
+  );
+  border: 1px solid var(--paper-line);
+  box-shadow:
+    0 1px 2px rgba(31, 42, 68, 0.06),
+    0 8px 24px -12px rgba(31, 42, 68, 0.18);
+}
+.paper-sheet::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2.6rem;
+  width: 1px;
+  background: rgba(217, 83, 79, 0.55);
+  pointer-events: none;
+}
+
+/* rubber-stamp priority labels */
+.stamp {
+  font-family: 'Karla', sans-serif;
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  transform: rotate(-2deg);
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+/* hand-drawn strike-through for done tasks */
+.done-strike {
+  position: relative;
+  color: var(--ink-faint);
+}
+.done-strike::after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  top: 52%;
+  height: 2px;
+  background: var(--ink-soft);
+  border-radius: 2px;
+  transform: rotate(-0.6deg);
+  animation: strikeDraw 0.25s ease-out;
+  transform-origin: left center;
+}
+@keyframes strikeDraw {
+  from { transform: scaleX(0) rotate(-0.6deg); }
+  to   { transform: scaleX(1) rotate(-0.6deg); }
 }
 
 @keyframes slideInDown {
-  from { opacity: 0; transform: translateY(-10px); }
+  from { opacity: 0; transform: translateY(-8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+.todo-enter { animation: slideInDown 0.22s ease-out; }
 
-.todo-enter {
-  animation: slideInDown 0.22s ease-out;
+.ink-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--paper-line);
+  color: var(--ink);
+  font-size: 1rem;
+  padding: 0.5rem 0.25rem;
+  transition: border-color 0.15s ease;
+}
+.ink-input::placeholder {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+.ink-input:focus {
+  outline: none;
+  border-bottom-color: var(--ink);
+}
+
+.btn-ink {
+  background: var(--ink);
+  color: #faf5e8;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 rgba(31, 42, 68, 0.25);
+  transition: all 0.15s ease;
+}
+.btn-ink:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(31, 42, 68, 0.25);
+}
+.btn-ink:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgba(31, 42, 68, 0.25);
+}
+.btn-ink:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
