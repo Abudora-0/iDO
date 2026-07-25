@@ -32,6 +32,27 @@ body {
   background: rgba(217, 83, 79, 0.2);
 }
 
+/* themed scrollbar */
+html {
+  scrollbar-color: var(--ink-faint) var(--paper);
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: var(--paper);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--ink-faint);
+  border-radius: 20px;
+  border: 3px solid var(--paper);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ink-soft);
+}
+
 /* the ruled-paper sheet */
 .paper-sheet {
   position: relative;
@@ -142,4 +163,103 @@ body {
 .btn-ink:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+/* custom themed date picker */
+.date-popover {
+  position: absolute;
+  z-index: 50;
+  margin-top: 6px;
+  width: 252px;
+  background: #faf5e8;
+  border: 1px solid var(--paper-line);
+  border-radius: 6px;
+  box-shadow:
+    0 1px 2px rgba(31, 42, 68, 0.06),
+    0 8px 24px -12px rgba(31, 42, 68, 0.3);
+  padding: 10px;
+  animation: slideInDown 0.15s ease-out;
+}
+.date-nav-btn {
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1;
+  padding: 3px 9px;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.date-nav-btn:hover {
+  color: var(--ink);
+  background: rgba(31, 42, 68, 0.06);
+}
+.date-weekday {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  text-align: center;
+  padding-bottom: 4px;
+}
+.date-cell {
+  font-size: 12.5px;
+  color: var(--ink);
+  padding: 5px 0;
+  margin: 1px 0;
+  border-radius: 5px;
+  text-align: center;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.date-cell:hover {
+  background: rgba(31, 42, 68, 0.08);
+}
+.date-cell-faint {
+  color: var(--ink-faint);
+}
+.date-cell-today {
+  box-shadow: inset 0 0 0 1.5px var(--margin-red);
+  font-weight: 700;
+}
+.date-cell-selected,
+.date-cell-selected:hover {
+  background: var(--ink);
+  color: #faf5e8;
+  font-weight: 700;
+}
+
+/* drag-to-reorder */
+.drag-handle {
+  color: var(--ink-faint);
+}
+.drop-target {
+  box-shadow: inset 0 2px 0 var(--margin-red);
+}
+
+/* undo toast */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--ink);
+  color: #faf5e8;
+  font-size: 13px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px -6px rgba(31, 42, 68, 0.45);
+  animation: slideInDown 0.2s ease-out;
+  z-index: 50;
+}
+.toast-undo {
+  color: #f6c9c7;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  flex-shrink: 0;
+}
+.toast-undo:hover {
+  color: #ffffff;
 }
