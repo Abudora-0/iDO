@@ -1,12 +1,12 @@
 # iDO: Priority-Based Todo App
 
-[![Live Demo](https://img.shields.io/badge/demo-live-d9534f?style=flat-square)](https://i-do-rouge.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live-iDO-d9534f?style=flat-square)](https://ido-it.vercel.app/)
 [![React](https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react&logoColor=white)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38bdf8?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![License: MIT](https://img.shields.io/badge/license-MIT-6b7f3f?style=flat-square)](LICENSE)
 
-**Live Demo:** https://i-do-rouge.vercel.app
+**Live Demo:** https://ido-it.vercel.app/
 
 A focused, distraction-free task manager with priorities, due dates, and real-time stats. Built to help you stay on top of what matters most.
 
